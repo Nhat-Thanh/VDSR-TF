@@ -42,6 +42,5 @@ sr_image = model.predict(lr_image)[0]
 
 sr_image = denorm01(sr_image)
 sr_image = tf.cast(sr_image, tf.uint8)
-sr_image = ycbcr2rgb(sr_image)
 
 write_image("sr.png", sr_image)
