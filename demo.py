@@ -28,7 +28,7 @@ write_image("bicubic.png", bicubic_image)
 # preprocess lr image 
 # -----------------------------------------------------------
 
-lr_image = norm01(lr_image)
+lr_image = norm01(bicubic_image)
 lr_image = tf.expand_dims(lr_image, axis=0)
 
 
