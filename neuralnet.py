@@ -6,11 +6,13 @@ import tensorflow as tf
 
 def VDSR_model():
     X_in = Input(shape=(None, None, 3))
-    X = X_in
+    X = Conv2D(64, 3, padding='same', kernel_initializer=HeNormal())(X_in)
+    X = Activation('relu')(X)
 
-    for _ in range(0, 20):
+    for _ in range(1, 20):
         X = Conv2D(64, 3, padding='same', kernel_initializer=HeNormal())(X)
         X = Activation('relu')(X)
+
     X = Conv2D(3, 3, padding='same', kernel_initializer=HeNormal())(X)
     X = Add()([X, X_in])
 

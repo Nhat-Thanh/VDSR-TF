@@ -28,7 +28,8 @@ write_image("bicubic.png", bicubic_image)
 # preprocess lr image 
 # -----------------------------------------------------------
 
-lr_image = norm01(bicubic_image)
+lr_image = rgb2ycbcr(bicubic_image)
+lr_image = norm01(lr_image)
 lr_image = tf.expand_dims(lr_image, axis=0)
 
 
@@ -42,5 +43,6 @@ sr_image = model.predict(lr_image)[0]
 
 sr_image = denorm01(sr_image)
 sr_image = tf.cast(sr_image, tf.uint8)
+sr_image = ycbcr2rgb(sr_image)
 
 write_image("sr.png", sr_image)
