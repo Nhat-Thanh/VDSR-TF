@@ -9,7 +9,7 @@ def VDSR_model():
     X = Conv2D(64, 3, padding='same', kernel_initializer=HeNormal())(X_in)
     X = Activation('relu')(X)
 
-    for _ in range(1, 20):
+    for _ in range(1, 19):
         X = Conv2D(64, 3, padding='same', kernel_initializer=HeNormal())(X)
         X = Activation('relu')(X)
 
