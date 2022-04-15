@@ -1,4 +1,3 @@
-from gc import garbage
 from utils.common import *
 from model import VDSR
 import argparse
