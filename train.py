@@ -54,7 +54,7 @@ test_set.load_data()
 # -----------------------------------------------------------
 
 vdsr = VDSR(scale)
-vdsr.setup(optimizer=Adam(learning_rate=1e-3),
+vdsr.setup(optimizer=Adam(learning_rate=3e-4),
             loss=MeanSquaredError(),
             model_path=model_path,
             metric=PSNR)
