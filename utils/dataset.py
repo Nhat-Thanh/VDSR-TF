@@ -27,8 +27,8 @@ class dataset:
             print(image_path)
             hr_image = read_image(image_path)
 
-            h = hr_image.shape[1]
-            w = hr_image.shape[2]
+            h = hr_image.shape[0]
+            w = hr_image.shape[1]
             for x in np.arange(start=0, stop=h-crop_size, step=step):
                 for y in np.arange(start=0, stop=w-crop_size, step=step):
                     subim_label  = hr_image[x : x + crop_size, y : y + crop_size]
