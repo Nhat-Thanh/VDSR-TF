@@ -1,10 +1,12 @@
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = '3'
+
 from tensorflow.keras.losses import MeanSquaredError 
 from tensorflow.keras.optimizers import Adam
 from utils.dataset import dataset
 from utils.common import PSNR
 from model import VDSR
 import argparse
-import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--epochs",           type=int,   default=80,             help='-')
