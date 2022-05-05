@@ -35,7 +35,7 @@ class dataset:
                     if transform:
                         subim_label = random_transform(subim_label)
 
-                    subim_data = gaussian_blur(subim_label, sigma=0.65)
+                    subim_data = gaussian_blur(subim_label, sigma=0.55)
                     subim_data = make_lr(subim_data, 3)
 
                     subim_label = rgb2ycbcr(subim_label)

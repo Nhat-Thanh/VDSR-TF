@@ -31,11 +31,9 @@ write_image("bicubic.png", bicubic_image)
 # preprocess lr image 
 # -----------------------------------------------------------
 
-lr_image = gaussian_blur(lr_image, sigma=0.2)
-lr_image = upscale(lr_image, scale)
-lr_image = rgb2ycbcr(lr_image)
-lr_image = norm01(lr_image)
-lr_image = tf.expand_dims(lr_image, axis=0)
+bicubic_image = rgb2ycbcr(bicubic_image)
+bicubic_image = norm01(bicubic_image)
+bicubic_image = tf.expand_dims(bicubic_image, axis=0)
 
 
 # -----------------------------------------------------------
@@ -44,7 +42,7 @@ lr_image = tf.expand_dims(lr_image, axis=0)
 
 model = VDSR()
 model.load_weights(ckpt_path)
-sr_image = model.predict(lr_image)[0]
+sr_image = model.predict(bicubic_image)[0]
 
 sr_image = denorm01(sr_image)
 sr_image = ycbcr2rgb(sr_image)
