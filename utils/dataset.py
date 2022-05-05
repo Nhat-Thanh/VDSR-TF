@@ -31,7 +31,7 @@ class dataset:
             w = hr_image.shape[2]
             for x in np.arange(start=0, stop=h-crop_size, step=step):
                 for y in np.arange(start=0, stop=w-crop_size, step=step):
-                    subim_label  = hr_image[:, x : x + crop_size, y : y + crop_size]
+                    subim_label  = hr_image[x : x + crop_size, y : y + crop_size]
                     if transform:
                         subim_label = random_transform(subim_label)
 
