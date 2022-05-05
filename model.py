@@ -72,10 +72,10 @@ class VDSR:
             metric_array = []
             isEnd = False
             while isEnd == False:
-                lr, hr, _ = train_set.get_batch(batch_size)
+                lr, hr, isEnd = train_set.get_batch(batch_size)
                 loss, metric = self.train_step(lr, hr)
-                loss_array.append(loss)
-                metric_array.append(metric)
+                loss_array.append(loss.numpy())
+                metric_array.append(metric.numpy())
 
             val_loss, val_metric = self.evaluate(valid_set)
             print(f"Step {cur_epoch}/{max_epoch}",
