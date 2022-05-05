@@ -8,11 +8,7 @@ import numpy as np
 # -----------------------------------------------------------
 
 class VDSR:
-    def __init__(self, scale): 
-
-        if scale not in [2, 3, 4]:
-            ValueError("scale must be 2, 3, or 4")
-
+    def __init__(self): 
         self.model = nn.VDSR_model()
         self.optimizer = None
         self.loss =  None
@@ -31,7 +27,7 @@ class VDSR:
     
     def load_checkpoint(self, ckpt_dir):
         self.ckpt_dir = ckpt_dir
-        self.ckpt = tf.train.Checkpoint(step=tf.Variable(0), 
+        self.ckpt = tf.train.Checkpoint(epoch=tf.Variable(0), 
                                         optimizer=self.optimizer,
                                         net=self.model)
         self.ckpt_man = tf.train.CheckpointManager(self.ckpt, ckpt_dir, max_to_keep=1)
@@ -58,10 +54,10 @@ class VDSR:
         return loss, metric
 
     def train(self, train_set, valid_set, batch_size, 
-              steps, save_every=1, save_best_only=False):
-        
-        cur_step = self.ckpt.step.numpy()
-        max_steps = steps + self.ckpt.step.numpy()
+              epochs, save_best_only=False):
+
+        cur_epoch = self.ckpt.epoch.numpy()
+        max_epoch = epochs + self.ckpt.epoch.numpy()
 
         prev_loss = np.inf
         if save_best_only and exists(self.model_path):
@@ -69,34 +65,34 @@ class VDSR:
             prev_loss, _ = self.evaluate(valid_set)
             self.load_checkpoint(self.ckpt_dir)
 
-        loss_mean = tf.keras.metrics.Mean()
-        metric_mean = tf.keras.metrics.Mean()
-        while cur_step < max_steps:
-            cur_step += 1
-            self.ckpt.step.assign_add(1)
-            lr, hr, _ = train_set.get_batch(batch_size)
-            loss, metric = self.train_step(lr, hr)
-            loss_mean(loss)
-            metric_mean(metric)
+        while cur_epoch < max_epoch:
+            cur_epoch += 1
+            self.ckpt.epoch.assign_add(1)
+            loss_array = []
+            metric_array = []
+            isEnd = False
+            while isEnd == False:
+                lr, hr, _ = train_set.get_batch(batch_size)
+                loss, metric = self.train_step(lr, hr)
+                loss_array.append(loss)
+                metric_array.append(metric)
 
-            if (cur_step % save_every == 0) or (cur_step >= max_steps):
-                val_loss, val_metric = self.evaluate(valid_set)
-                print(f"Step {cur_step}/{max_steps}",
-                      f"- loss: {loss_mean.result():.7f}",
-                      f"- {self.metric.__name__}: {metric_mean.result():.3f}",
-                      f"- val_loss: {val_loss:.7f}",
-                      f"- val_{self.metric.__name__}: {val_metric:.3f}")
-                loss_mean.reset_states()
-                metric_mean.reset_states()
-                self.ckpt_man.save(checkpoint_number=0)
-                
-                if save_best_only and val_loss > prev_loss:
-                    continue
-                prev_loss = val_loss
-                self.model.save_weights(self.model_path)
-                print(f"Save model to {self.model_path}\n")
+            val_loss, val_metric = self.evaluate(valid_set)
+            print(f"Step {cur_epoch}/{max_epoch}",
+                  f"- loss: {np.mean(loss_array):.7f}",
+                  f"- {self.metric.__name__}: {np.mean(metric_array):.3f}",
+                  f"- val_loss: {val_loss:.7f}",
+                  f"- val_{self.metric.__name__}: {val_metric:.3f}")
 
-    @tf.function    
+            self.ckpt_man.save(checkpoint_number=0)
+
+            if save_best_only and val_loss > prev_loss:
+                continue
+            prev_loss = val_loss
+            self.model.save_weights(self.model_path)
+            print(f"Save model to {self.model_path}\n")
+
+    @tf.function
     def train_step(self, lr, hr):
         with tf.GradientTape() as tape:
             sr = self.model(lr, training=True)
@@ -105,3 +101,4 @@ class VDSR:
         gradient = tape.gradient(loss, self.model.trainable_variables)
         self.optimizer.apply_gradients(zip(gradient, self.model.trainable_variables))
         return loss, metric
+

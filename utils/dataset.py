@@ -13,13 +13,13 @@ class dataset:
         self.labels_file = os.path.join(self.dataset_dir, f"labels_{self.subset}.npy")
         self.cur_idx = 0
 
-    def generate(self, lr_crop_size, hr_crop_size, scale, transform=False):
+    def generate(self, crop_size, transform=False):
         if exists(self.data_file) and exists(self.labels_file):
             print(f"{self.data_file} and {self.labels_file} HAVE ALREADY EXISTED\n")
             return
         data = []
         labels = []
-        step = hr_crop_size - 1
+        step = crop_size - 1
 
         subset_dir = os.path.join(self.dataset_dir, self.subset)
         ls_images = sorted_list(subset_dir)
@@ -30,18 +30,18 @@ class dataset:
             if transform:
                 hr_image = random_transform(hr_image)
 
-            lr_image = gaussian_blur(hr_image, sigma=0.7)
-            lr_image = makelr(lr_image, scale)
+            lr_image = gaussian_blur(hr_image, sigma=0.55)
+            lr_image = makelr(lr_image, 3)
 
             hr_image = norm01(hr_image)
             lr_image = norm01(lr_image)
 
             h = hr_image.shape[0]
             w = hr_image.shape[1]
-            for x in np.arange(start=0, stop=h-hr_crop_size, step=step):
-                for y in np.arange(start=0, stop=w-hr_crop_size, step=step):
-                    subim_data = lr_image[x : x + lr_crop_size, y : y + lr_crop_size]
-                    subim_label = hr_image[x : x + hr_crop_size, y : y + hr_crop_size]
+            for x in np.arange(start=0, stop=h-crop_size, step=step):
+                for y in np.arange(start=0, stop=w-crop_size, step=step):
+                    subim_data = lr_image[x : x + crop_size, y : y + crop_size]
+                    subim_label = hr_image[x : x + crop_size, y : y + crop_size]
 
                     data.append(subim_data.numpy())
                     labels.append(subim_label.numpy())

@@ -3,9 +3,9 @@ from model import VDSR
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--scale',        type=int,   default=2,                              help='-')
-parser.add_argument("--image-path",   type=str,   default="dataset/test1.png",            help='-')
-parser.add_argument("--ckpt-path",    type=str,   default="checkpoint/x2/FSRCNN-x2.h5",   help='-')
+parser.add_argument('--scale',        type=int,   default=2,                      help='-')
+parser.add_argument("--image-path",   type=str,   default="dataset/test1.png",    help='-')
+parser.add_argument("--ckpt-path",    type=str,   default="checkpoint/VDSR.h5",   help='-')
 
 FLAGS, unparsed = parser.parse_known_args()
 image_path = FLAGS.image_path
@@ -39,7 +39,7 @@ lr_image = tf.expand_dims(lr_image, axis=0)
 #  predict and save image
 # -----------------------------------------------------------
 
-model = VDSR(scale)
+model = VDSR()
 model.load_weights(ckpt_path)
 sr_image = model.predict(lr_image)[0]
 
