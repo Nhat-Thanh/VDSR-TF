@@ -44,7 +44,7 @@ valid_set.load_data()
 # -----------------------------------------------------------
 
 vdsr = VDSR()
-vdsr.setup(optimizer=Adam(learning_rate=1e-3),
+vdsr.setup(optimizer=Adam(learning_rate=1e-3, epsilon=1e-08),
             loss=MeanSquaredError(),
             model_path=model_path,
             metric=PSNR)
