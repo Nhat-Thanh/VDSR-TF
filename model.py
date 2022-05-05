@@ -74,13 +74,13 @@ class VDSR:
             while isEnd == False:
                 lr, hr, isEnd = train_set.get_batch(batch_size)
                 loss, metric = self.train_step(lr, hr)
-                loss_array.append(loss.numpy())
-                metric_array.append(metric.numpy())
+                loss_array.append(loss)
+                metric_array.append(metric)
 
             val_loss, val_metric = self.evaluate(valid_set)
             print(f"Epoch {cur_epoch}/{max_epoch}",
-                  f"- loss: {np.mean(loss_array):.7f}",
-                  f"- {self.metric.__name__}: {np.mean(metric_array):.3f}",
+                  f"- loss: {tf.reduce_mean(loss_array).numpy():.7f}",
+                  f"- {self.metric.__name__}: {tf.reduce_mean(metric_array).numpy():.3f}",
                   f"- val_loss: {val_loss:.7f}",
                   f"- val_{self.metric.__name__}: {val_metric:.3f}")
 
