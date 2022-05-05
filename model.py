@@ -78,7 +78,7 @@ class VDSR:
                 metric_array.append(metric.numpy())
 
             val_loss, val_metric = self.evaluate(valid_set)
-            print(f"Step {cur_epoch}/{max_epoch}",
+            print(f"Epoch {cur_epoch}/{max_epoch}",
                   f"- loss: {np.mean(loss_array):.7f}",
                   f"- {self.metric.__name__}: {np.mean(metric_array):.3f}",
                   f"- val_loss: {val_loss:.7f}",
