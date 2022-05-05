@@ -26,22 +26,23 @@ class dataset:
         for image_path in ls_images:
             print(image_path)
             hr_image = read_image(image_path)
-            hr_image = rgb2ycbcr(hr_image)
-            if transform:
-                hr_image = random_transform(hr_image)
 
-            lr_image = gaussian_blur(hr_image, sigma=0.55)
-            lr_image = makelr(lr_image, 3)
-
-            hr_image = norm01(hr_image)
-            lr_image = norm01(lr_image)
-
-            h = hr_image.shape[0]
-            w = hr_image.shape[1]
+            h = hr_image.shape[1]
+            w = hr_image.shape[2]
             for x in np.arange(start=0, stop=h-crop_size, step=step):
                 for y in np.arange(start=0, stop=w-crop_size, step=step):
-                    subim_data = lr_image[x : x + crop_size, y : y + crop_size]
-                    subim_label = hr_image[x : x + crop_size, y : y + crop_size]
+                    subim_label  = hr_image[:, x : x + crop_size, y : y + crop_size]
+                    if transform:
+                        subim_label = random_transform(subim_label)
+
+                    subim_data = gaussian_blur(subim_label, sigma=0.55)
+                    subim_data = make_lr(subim_data, 3)
+
+                    subim_label = rgb2ycbcr(subim_label)
+                    subim_data = rgb2ycbcr(subim_data)
+
+                    subim_label = norm01(subim_label)
+                    subim_data = norm01(subim_data)
 
                     data.append(subim_data.numpy())
                     labels.append(subim_label.numpy())
