@@ -66,9 +66,6 @@ class VDSR:
             self.load_checkpoint(self.ckpt_dir)
 
         while cur_epoch < max_epoch:
-            if cur_epoch % 20 == 0:
-                learning_rate = self.optimizer.learning_rate
-                self.optimizer.learning_rate.assign(learning_rate / 10)
             cur_epoch += 1
             self.ckpt.epoch.assign_add(1)
             loss_array = []
@@ -95,6 +92,10 @@ class VDSR:
             self.model.save_weights(self.model_path)
             print(f"Save model to {self.model_path}\n")
 
+            if cur_epoch % 20 == 0:
+                learning_rate = self.optimizer.learning_rate
+                self.optimizer.learning_rate.assign(learning_rate / 10)
+ 
     @tf.function
     def train_step(self, lr, hr):
         with tf.GradientTape() as tape:
