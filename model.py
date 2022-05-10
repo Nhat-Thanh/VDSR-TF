@@ -99,6 +99,8 @@ class VDSR:
             loss = self.loss(hr, sr)
             metric = self.metric(hr, sr)
         gradient = tape.gradient(loss, self.model.trainable_variables)
+        clip_value = 0.4 / self.optimizer.learning_rate
+        gradient = [tf.clip_by_value(grad, -clip_value, clip_value) for grad in gradient]
         self.optimizer.apply_gradients(zip(gradient, self.model.trainable_variables))
         return loss, metric
 

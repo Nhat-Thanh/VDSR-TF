@@ -2,7 +2,7 @@ import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = '3'
 
 from tensorflow.keras.losses import MeanSquaredError 
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, SGD
 from utils.dataset import dataset
 from utils.common import PSNR
 from model import VDSR
@@ -44,7 +44,8 @@ valid_set.load_data()
 # -----------------------------------------------------------
 
 vdsr = VDSR()
-vdsr.setup(optimizer=Adam(learning_rate=1e-3, epsilon=1e-08),
+# vdsr.setup(optimizer=Adam(learning_rate=1e-3, epsilon=1e-08),
+vdsr.setup(optimizer=SGD(learning_rate=1e-3, momentum=0.9),
             loss=MeanSquaredError(),
             model_path=model_path,
             metric=PSNR)
