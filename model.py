@@ -67,7 +67,8 @@ class VDSR:
 
         while cur_epoch < max_epoch:
             if cur_epoch % 20 == 0:
-                self.optimizer.learning_rate /= 10
+                learning_rate = self.optimizer.learning_rate
+                self.optimizer.learning_rate.assign(learning_rate / 10)
             cur_epoch += 1
             self.ckpt.epoch.assign_add(1)
             loss_array = []
