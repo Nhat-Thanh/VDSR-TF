@@ -66,6 +66,8 @@ class VDSR:
             self.load_checkpoint(self.ckpt_dir)
 
         while cur_epoch < max_epoch:
+            if cur_epoch % 20 == 0:
+                self.optimizer.learning_rate /= 10
             cur_epoch += 1
             self.ckpt.epoch.assign_add(1)
             loss_array = []
